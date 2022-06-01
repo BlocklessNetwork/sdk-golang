@@ -1,7 +1,7 @@
 package blockless
 
 const (
-	SUCCESS = iota
+	SUCCESS Error = iota
 	EOF
 	TOO_BIG
 	ACCES
