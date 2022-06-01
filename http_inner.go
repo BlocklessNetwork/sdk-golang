@@ -6,11 +6,11 @@ type innerHandle int
 
 type Options struct {
 	//http method, GET POST etc.
-	Method         string `json:"method"`
+	Method string `json:"method"`
 	//connect timeout
-	ConnectTimeout int32  `json:"connectTimeout"`
+	ConnectTimeout int32 `json:"connectTimeout"`
 	//read timeout
-	ReadTimeout    int32  `json:"readTimeout"`
+	ReadTimeout int32 `json:"readTimeout"`
 }
 
 type HttpHandle struct {
@@ -24,8 +24,11 @@ func blockless_open(a string, opts string, fd *int) syscall.Errno
 
 //open a url with the options
 //if success return the http Object
-func HttpOpen(url string, options string) (HttpHandle, error) {
+func HttpOpen(url string, options string) (*HttpHandle, error) {
 	var handle int
 	err := blockless_open(url, options, &handle)
-	return HttpHandle{inner: }, nil
+	if err != 0 {
+		return nil, Error(err)
+	}
+	return &HttpHandle{inner: innerHandle(handle)}, nil
 }
