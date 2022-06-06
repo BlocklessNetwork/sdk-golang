@@ -1,7 +1,9 @@
-import "blockless-sdk-golang"
+package main
+
+import http "github.com/txlabs/blockless-sdk-golang/http"
 
 func main() {
-	if handle, err := http.HttpOpen("https://www.163.com", http.NewDefaultHttpOptions()); err != nil {
+	if _, err := http.HttpOpen("https://www.163.com", http.NewDefaultHttpOptions("GET")); err != nil {
 		panic(err)
 	}
 

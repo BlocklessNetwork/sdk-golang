@@ -49,7 +49,7 @@ func http_read_body(fd uint32, buf uintptr, bufLen uint32, num *uint32) syscall.
 
 //open a url with the options
 //if success return the http handle
-func HttpOpen(url string, options Options) (*HttpHandle, error) {
+func HttpOpen(url string, options HttpOptions) (*HttpHandle, error) {
 	var handle innerHandle
 	//format the options to json format, the json string will parse the "".
 	//TODO.
