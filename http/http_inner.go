@@ -32,8 +32,8 @@ type HttpHandle struct {
 }
 
 //go:wasm-module blockless_http
-//export http_open
-func http_open(a string, opts string, fd *innerHandle) syscall.Errno
+//export http_req
+func http_req(a string, opts string, fd *innerHandle) syscall.Errno
 
 //go:wasm-module blockless_http
 //export http_close
@@ -49,7 +49,7 @@ func http_read_body(fd uint32, buf uintptr, bufLen uint32, num *uint32) syscall.
 
 //open a url with the options
 //if success return the http handle
-func HttpOpen(url string, options HttpOptions) (*HttpHandle, error) {
+func HttpRequest(url string, options HttpOptions) (*HttpHandle, error) {
 	var handle innerHandle
 	//format the options to json format, the json string will parse the "".
 	//TODO.
@@ -58,7 +58,7 @@ func HttpOpen(url string, options HttpOptions) (*HttpHandle, error) {
 		options.ConnectTimeout,
 		options.ReadTimeout,
 	)
-	err := http_open(url, opts, &handle)
+	err := http_req(url, opts, &handle)
 	if err != 0 {
 		return nil, Error(err)
 	}
