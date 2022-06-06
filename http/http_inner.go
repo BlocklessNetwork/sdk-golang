@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"reflect"
 	"syscall"
 	"unsafe"
@@ -8,13 +9,21 @@ import (
 
 type innerHandle uint32
 
-type Options struct {
+type HttpOptions struct {
 	//http method, GET POST etc.
 	Method string `json:"method"`
-	//connect timeout
+	//connect timeout, unit is second.
 	ConnectTimeout int32 `json:"connectTimeout"`
-	//read timeout
+	//read timeout, unit is second.
 	ReadTimeout int32 `json:"readTimeout"`
+}
+
+func NewDefaultHttpOptions(method string) HttpOptions {
+	return HttpOptions{
+		Method:         method,
+		ConnectTimeout: 30,
+		ReadTimeout:    30,
+	}
 }
 
 type HttpHandle struct {
@@ -40,9 +49,16 @@ func http_read_body(fd uint32, buf uintptr, bufLen uint32, num *uint32) syscall.
 
 //open a url with the options
 //if success return the http handle
-func HttpOpen(url string, options string) (*HttpHandle, error) {
+func HttpOpen(url string, options Options) (*HttpHandle, error) {
 	var handle innerHandle
-	err := http_open(url, options, &handle)
+	//format the options to json format, the json string will parse the "".
+	//TODO.
+	var opts = fmt.Sprintf(`{"method":"%s", "connectTimeout":%d, "readTimeout":%d}`,
+		options.Method,
+		options.ConnectTimeout,
+		options.ReadTimeout,
+	)
+	err := http_open(url, opts, &handle)
 	if err != 0 {
 		return nil, Error(err)
 	}
