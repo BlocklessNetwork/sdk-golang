@@ -7,7 +7,8 @@ The sdk is work with tinygo.
 The example for http request run in blockless sandbox.
 
 ```go
-import "blockless/http"
+package main
+import "blockless-sdk-golang"
 
 func main() {
     if handle, err := http.HttpOpen("https://www.163.com", http.NewDefaultHttpOptions()); err != nil {
