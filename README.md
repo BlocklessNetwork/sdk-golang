@@ -17,3 +17,12 @@ func main() {
 }
 ```
 
+How to compile?
+
+1. Install the tinygo, the url is https://tinygo.org/.
+
+2. use the follow command to compile.
+
+```bash
+$ tinygo build -o hello_http.wasi -target wasi .
+```
