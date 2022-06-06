@@ -1,6 +1,6 @@
 package http
 
-type Error int
+type Error uint32
 
 func (e Error) Error() string {
 	switch e {
