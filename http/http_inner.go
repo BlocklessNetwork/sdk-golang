@@ -2,6 +2,7 @@ package http
 
 import (
 	"fmt"
+	"io"
 	"reflect"
 	"syscall"
 	"unsafe"
@@ -78,19 +79,41 @@ func (h *HttpHandle) GetHeader(header string) (string, error) {
 	buf := make([]byte, 1024*10)
 	sliceHeader := *(*reflect.SliceHeader)(unsafe.Pointer(&buf))
 	var num uint32 = 0
-	err := http_read_header(uint32(h.inner), header, sliceHeader.Data, uint32(len(buf)), &num)
+	err := http_read_header(uint32(h.inner), header, sliceHeader.Data, uint32(cap(buf)), &num)
 	if err != 0 {
 		return "", Error(err)
 	}
 	return string(buf[:num]), nil
 }
 
-func (h *HttpHandle) ReadBody(buf []byte) (string, error) {
+func (h *HttpHandle) ReadBody(buf []byte) (uint32, error) {
 	sliceHeader := *(*reflect.SliceHeader)(unsafe.Pointer(&buf))
 	var num uint32 = 0
-	err := http_read_body(uint32(h.inner), sliceHeader.Data, uint32(len(buf)), &num)
+	err := http_read_body(uint32(h.inner), sliceHeader.Data, uint32(cap(buf)), &num)
 	if err != 0 {
-		return "", Error(err)
+		return num, Error(err)
 	}
-	return string(buf[:num]), nil
+	return num, nil
+}
+
+func (h *HttpHandle) ReadAll() ([]byte, error) {
+	b := make([]byte, 0, 512)
+	for {
+		if len(b) == cap(b) {
+			// Add more capacity (let append pick how much).
+			b = append(b, 0)[:len(b)]
+		}
+		n, err := h.ReadBody(b[len(b):cap(b)])
+		//End
+		if n == 0 && err == nil {
+			return b, nil
+		}
+		b = b[:len(b)+int(n)]
+		if err != nil {
+			if err == io.EOF {
+				err = nil
+			}
+			return b, err
+		}
+	}
 }
