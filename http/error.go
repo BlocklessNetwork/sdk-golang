@@ -4,29 +4,31 @@ type Error uint32
 
 func (e Error) Error() string {
 	switch e {
-	case EOF:
-		return "end of file"
-	case TOO_BIG:
-		return "too big"
-	case ACCES:
-		return "access errror"
-	case ADDRINUSE:
-		return "address in use"
-	case ADDRNOTAVAIL:
-		return "address not avail"
-	case BAD_PARAMS:
-		return "bad parameters"
-	case AGAIN:
-		return "again"
-	case BADF:
-		return "bad file descriptor"
-	case BAD_CONNECT:
-		return "bad connection"
-	case BAD_DRIVER:
-		return "bad driver"
-	case BAD_OPEN:
-		return "open fail"
+	case INVALID_HANDLE:
+		return "Invalid handle"
+	case MEMORY_ACCESS_ERROR:
+		return "Memory access error"
+	case BUFFER_TOO_SMALL:
+		return "Buffer too small"
+	case HEADER_NOT_FOUND:
+		return "Header not found"
+	case UTF8_ERROR:
+		return "UTF-8 error"
+	case DESTINATION_NOT_ALLOWED:
+		return "Destination not allowed"
+	case INVALID_METHOD:
+		return "Invalid method"
+	case INVALID_ENCODING:
+		return "Invalid encoding"
+	case INVALID_URL:
+		return "Invalid URL"
+	case REQUEST_ERROR:
+		return "Request error"
+	case RUNTIME_ERROR:
+		return "Runtime error"
+	case TOO_MANY_SESSIONS:
+		return "Too many sessions"
 	default:
-		return "unknow error"
+		return "Runtime error"
 	}
 }
