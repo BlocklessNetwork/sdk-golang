@@ -28,6 +28,8 @@ func (e Error) Error() string {
 		return "Runtime error"
 	case TOO_MANY_SESSIONS:
 		return "Too many sessions"
+	case INVALID_DRIVER:
+		return "Invalid driver"
 	default:
 		return "Runtime error"
 	}
