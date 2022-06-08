@@ -9,6 +9,7 @@ import (
 )
 
 type innerHandle uint32
+type StatusCode int32
 
 type HttpOptions struct {
 	//http method, GET POST etc.
@@ -30,11 +31,12 @@ func NewDefaultHttpOptions(method string) HttpOptions {
 type HttpHandle struct {
 	// inner handle for http from http driver.
 	inner innerHandle
+	code  StatusCode
 }
 
 //go:wasm-module blockless_http
 //export http_req
-func http_req(a string, opts string, fd *innerHandle) syscall.Errno
+func http_req(a string, opts string, fd *innerHandle, code *StatusCode) syscall.Errno
 
 //go:wasm-module blockless_http
 //export http_close
@@ -59,11 +61,12 @@ func HttpRequest(url string, options HttpOptions) (*HttpHandle, error) {
 		options.ConnectTimeout,
 		options.ReadTimeout,
 	)
-	err := http_req(url, opts, &handle)
+	var code StatusCode
+	err := http_req(url, opts, &handle, &code)
 	if err != 0 {
 		return nil, Error(err)
 	}
-	return &HttpHandle{inner: innerHandle(handle)}, nil
+	return &HttpHandle{inner: innerHandle(handle), code: code}, nil
 }
 
 //http handle close
@@ -84,6 +87,10 @@ func (h *HttpHandle) GetHeader(header string) (string, error) {
 		return "", Error(err)
 	}
 	return string(buf[:num]), nil
+}
+
+func (h *HttpHandle) StatusCode() StatusCode {
+	return h.code
 }
 
 func (h *HttpHandle) ReadBody(buf []byte) (uint32, error) {
