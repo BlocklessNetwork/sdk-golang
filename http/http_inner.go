@@ -18,6 +18,8 @@ type HttpOptions struct {
 	ConnectTimeout int32 `json:"connectTimeout"`
 	//read timeout, unit is second.
 	ReadTimeout int32 `json:"readTimeout"`
+	//request Body
+	Body string `json:"body"`
 }
 
 func NewDefaultHttpOptions(method string) HttpOptions {
@@ -56,10 +58,11 @@ func HttpRequest(url string, options HttpOptions) (*HttpHandle, error) {
 	var handle innerHandle
 	//format the options to json format, the json string will parse the "".
 	//TODO.
-	var opts = fmt.Sprintf(`{"method":"%s", "connectTimeout":%d, "readTimeout":%d}`,
+	var opts = fmt.Sprintf(`{"method":"%s", "connectTimeout":%d, "readTimeout":%d, "body":"%s"}`,
 		options.Method,
 		options.ConnectTimeout,
 		options.ReadTimeout,
+		options.Body,
 	)
 	var code StatusCode
 	err := http_req(url, opts, &handle, &code)
