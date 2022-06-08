@@ -87,16 +87,20 @@ func (h *HttpHandle) GetHeader(header string) (string, error) {
 }
 
 func (h *HttpHandle) ReadBody(buf []byte) (uint32, error) {
+
+	if cap(buf) == 0 {
+		return 0, BUFFER_TOO_SMALL
+	}
 	sliceHeader := *(*reflect.SliceHeader)(unsafe.Pointer(&buf))
 	var num uint32 = 0
-	err := http_read_body(uint32(h.inner), sliceHeader.Data, uint32(cap(buf)), &num)
+	err := http_read_body(uint32(h.inner), sliceHeader.Data, uint32(sliceHeader.Cap), &num)
 	if err != 0 {
 		return num, Error(err)
 	}
 	return num, nil
 }
 
-func (h *HttpHandle) ReadAll() ([]byte, error) {
+func (h *HttpHandle) ReadBodyAll() ([]byte, error) {
 	b := make([]byte, 0, 512)
 	for {
 		if len(b) == cap(b) {

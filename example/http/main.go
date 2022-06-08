@@ -14,9 +14,8 @@ func main() {
 	}
 	defer handle.Close()
 	var bs []byte
-	if bs, err = handle.ReadAll(); err != nil {
+	if bs, err = handle.ReadBodyAll(); err != nil {
 		panic(err)
 	}
 	fmt.Println(string(bs))
-
 }
