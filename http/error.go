@@ -30,6 +30,8 @@ func (e Error) Error() string {
 		return "Too many sessions"
 	case INVALID_DRIVER:
 		return "Invalid driver"
+	case PERMISSION_DENY:
+		return "Permission deny"
 	default:
 		return "Runtime error"
 	}
