@@ -4,7 +4,7 @@ import "bytes"
 
 func Encode(s string) string {
 	buf := bytes.Buffer{}
-	for i := 0; i < len(s); {
+	for i := 0; i < len(s); i++ {
 		b := s[i]
 		switch b {
 		case '"':
