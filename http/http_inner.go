@@ -6,6 +6,8 @@ import (
 	"reflect"
 	"syscall"
 	"unsafe"
+
+	"github.com/txlabs/blockless-sdk-golang/jsonparser"
 )
 
 type innerHandle uint32
@@ -62,7 +64,7 @@ func HttpRequest(url string, options HttpOptions) (*HttpHandle, error) {
 		options.Method,
 		options.ConnectTimeout,
 		options.ReadTimeout,
-		options.Body,
+		jsonparser.Encode(options.Body),
 	)
 	var code StatusCode
 	err := http_req(url, opts, &handle, &code)
