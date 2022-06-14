@@ -3,7 +3,7 @@
 
 This is blockless sandbox golang sdk, we can use it develop the app with the golang. 
 
-The sdk is work with tinygo.
+The sdk is work with tinygo, the built-in support json , http  and others.
 
 The example for http request run in blockless sandbox.
 
@@ -56,7 +56,7 @@ func main() {
 }
 ```
 
-How to compile?
+### How to compile
 
 1. Install the tinygo, the url is https://tinygo.org/.
 
