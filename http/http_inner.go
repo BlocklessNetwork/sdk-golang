@@ -44,15 +44,15 @@ func http_req(a string, opts string, fd *innerHandle, code *StatusCode) syscall.
 
 //go:wasm-module blockless_http
 //export http_close
-func http_close(fd uint32) syscall.Errno
+func http_close(fd innerHandle) syscall.Errno
 
 //go:wasm-module blockless_http
 //export http_read_header
-func http_read_header(fd uint32, header string, buf uintptr, bufLen uint32, num *uint32) syscall.Errno
+func http_read_header(fd innerHandle, header string, buf uintptr, bufLen uint32, num *uint32) syscall.Errno
 
 //go:wasm-module blockless_http
 //export http_read_body
-func http_read_body(fd uint32, buf uintptr, bufLen uint32, num *uint32) syscall.Errno
+func http_read_body(fd innerHandle, buf uintptr, bufLen uint32, num *uint32) syscall.Errno
 
 //open a url with the options
 //if success return the http handle
@@ -76,7 +76,7 @@ func HttpRequest(url string, options HttpOptions) (*HttpHandle, error) {
 
 //http handle close
 func (h *HttpHandle) Close() error {
-	err := http_close(uint32(h.inner))
+	err := http_close(h.inner)
 	if err != 0 {
 		return Error(err)
 	}
@@ -87,7 +87,7 @@ func (h *HttpHandle) GetHeader(header string) (string, error) {
 	buf := make([]byte, 1024*10)
 	sliceHeader := *(*reflect.SliceHeader)(unsafe.Pointer(&buf))
 	var num uint32 = 0
-	err := http_read_header(uint32(h.inner), header, sliceHeader.Data, uint32(cap(buf)), &num)
+	err := http_read_header(h.inner, header, sliceHeader.Data, uint32(cap(buf)), &num)
 	if err != 0 {
 		return "", Error(err)
 	}
@@ -105,7 +105,7 @@ func (h *HttpHandle) ReadBody(buf []byte) (uint32, error) {
 	}
 	sliceHeader := *(*reflect.SliceHeader)(unsafe.Pointer(&buf))
 	var num uint32 = 0
-	err := http_read_body(uint32(h.inner), sliceHeader.Data, uint32(sliceHeader.Cap), &num)
+	err := http_read_body(h.inner, sliceHeader.Data, uint32(sliceHeader.Cap), &num)
 	if err != 0 {
 		return num, Error(err)
 	}
