@@ -1,7 +1,6 @@
 package ipfs
 
 import (
-	"fmt"
 	"io"
 	"reflect"
 	"syscall"
@@ -61,8 +60,7 @@ func ipfsCommandResult(opts *IpfsOptions) (*CommanResult, error) {
 func ipfsCommand(opts *IpfsOptions) (*commandRs, error) {
 	var handle innerHandle
 	var code StatusCode
-	var optsJson = opts.ToJsonString()
-	fmt.Println(optsJson)
+	var optsJson = opts.JsonString()
 	var errno syscall.Errno
 	if errno = ipfs_command(optsJson, &handle, &code); errno != 0 {
 		return nil, Error(errno)
@@ -80,6 +78,19 @@ func readBody(h innerHandle, buf []byte) (uint32, error) {
 	sliceHeader := *(*reflect.SliceHeader)(unsafe.Pointer(&buf))
 	var num uint32 = 0
 	err := ipfs_read(h, sliceHeader.Data, uint32(sliceHeader.Cap), &num)
+	if err != 0 {
+		return num, Error(err)
+	}
+	return num, nil
+}
+
+func writeBody(h innerHandle, buf []byte) (uint32, error) {
+	if cap(buf) == 0 {
+		return 0, BUFFER_TOO_SMALL
+	}
+	sliceHeader := *(*reflect.SliceHeader)(unsafe.Pointer(&buf))
+	var num uint32 = 0
+	err := ipfs_write(h, sliceHeader.Data, uint32(sliceHeader.Cap), &num)
 	if err != 0 {
 		return num, Error(err)
 	}
