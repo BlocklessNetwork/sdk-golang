@@ -1,12 +1,9 @@
-# blockless-golang-sdk
+# Blockless SDK for Go
 ![](blockless.png)
 
-This is blockless sandbox golang sdk, we can use it develop the app with the golang. 
+Develop your [TinyGo](https://tinygo.org/) Function or App with Blockless SDK. Currently, this SDK has built-in support for JSON and HTTP.
 
-The sdk is work with tinygo, the built-in support json , http  and others.
-
-The example for http request run in blockless sandbox.
-
+## Example HTTP request written in Go with Blockless SDK
 ```go
 package main
 
@@ -56,11 +53,11 @@ func main() {
 }
 ```
 
-### How to compile
+## How to compile
 
-1. Install the tinygo, the url is https://tinygo.org/.
+1. Install [Tinygo](https://tinygo.org/)
 
-2. use the follow command to compile.
+2. Compile using the following command:
 
 ```bash
 $ tinygo build -o hello_http.wasi -target wasi .
